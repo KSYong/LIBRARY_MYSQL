@@ -1,2 +1,2 @@
 # LIBRARY_MYSQL
-Library which you can add, update, delete, search and display.
+Library which you can add, update, delete and display.

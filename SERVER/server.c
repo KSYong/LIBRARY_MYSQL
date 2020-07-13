@@ -69,12 +69,18 @@ server_t* server_init(){
  * @param server 삭제할 server 객체
  */
 void server_destroy(server_t* server){
-    if (close(server->sockfd) == -1){
-        perror("close failed!");
+    if (server){
+        if (close(server->sockfd) == -1){
+            perror("close failed!");
+            return -1;
+        }
+        mysql_close(server->mysql);
+        free(server);
+    }
+    else{
+        perror("couldn't get server object!");
         return -1;
     }
-    mysql_close(server->mysql);
-    free(server);
 }
 
 /**
@@ -98,11 +104,9 @@ void server_process_data(server_t* server){
             printf("Client : %s\n", buffer);
             if (memcmp(buffer, add, sizeof("add")) == 0){
                 server_add_data(server);
-                printf("Data added to DB\n");
             }
             else if (memcmp(buffer, display, sizeof("display"))==0 ){
                 server_display_data(server);
-                printf("Data displayed from DB\n");
             }
         }
         else{
@@ -115,6 +119,10 @@ void server_process_data(server_t* server){
             printf("Response sent from server to client\n");
         }   
     }
+    else{
+        perror("couldn't get server object!");
+        return -1;
+    }
 }
 
 /**
@@ -124,13 +132,19 @@ void server_process_data(server_t* server){
  * @param server 데이터 추가를 요청할 server 객체
  */
 void server_add_data(server_t* server){
-    if (mysql_query(server->mysql, "INSERT INTO books VALUES(1, 'title2', 'author2')")){
-        fprintf(stderr, "%s\n", mysql_error(server->mysql));
-        mysql_close(server->mysql);
-        return -1;
+    if (server){
+        if (mysql_query(server->mysql, "INSERT INTO books VALUES(3, 'title4', 'author4')")){
+            fprintf(stderr, "%s\n", mysql_error(server->mysql));
+            mysql_close(server->mysql);
+            return -1;
+        }
+        else{
+            printf("Data added to DB\n");
+        }
     }
-    else{
-        printf("Data added to DB\n");
+     else{
+        perror("couldn't get server object!");
+        return -1;
     }
 }
 
@@ -141,21 +155,30 @@ void server_add_data(server_t* server){
  * @param server MySQL에 요청을 보낼  server 객체
  */
 void server_display_data(server_t* server){
-    if(mysql_query(server->mysql, "SELECT * FROM books")){
-        fprintf(stderr, "%s\n", mysql_error(server->mysql));
-        mysql_close(server->mysql);
+    if (server){
+        if(mysql_query(server->mysql, "SELECT * FROM books")){
+            fprintf(stderr, "%s\n", mysql_error(server->mysql));
+            mysql_close(server->mysql);
+            return -1;
+        }
+        else{
+            printf("Data displayed from DB\n");
+        }
+
+        MYSQL_RES *result = mysql_store_result(server->mysql);
+        int num_fields = mysql_num_fields(result);
+        MYSQL_ROW row;
+
+        while(row = mysql_fetch_row(result)){
+            for(int i = 0; i < num_fields; i++){
+                printf("%s  ", row[i] ? row[i] : "NULL");
+            }
+            printf("\n");
+        }
+        mysql_free_result(result);
+    }
+    else{
+        perror("couldn't get server object!");
         return -1;
     }
-
-    MYSQL_RES *result = mysql_store_result(server->mysql);
-    int num_fields = mysql_num_fields(result);
-    MYSQL_ROW row;
-
-    while(row = mysql_fetch_row(result)){
-        for(int i = 0; i < num_fields; i++){
-            printf("%s  ", row[i] ? row[i] : "NULL");
-        }
-        printf("\n");
-    }
-    mysql_free_result(result);
 }

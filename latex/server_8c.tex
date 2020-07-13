@@ -1,0 +1,150 @@
+\hypertarget{server_8c}{\section{S\-E\-R\-V\-E\-R/server.c File Reference}
+\label{server_8c}\index{S\-E\-R\-V\-E\-R/server.\-c@{S\-E\-R\-V\-E\-R/server.\-c}}
+}
+{\ttfamily \#include \char`\"{}server.\-h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{server_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}{main} ()
+\begin{DoxyCompactList}\small\item\em server 실행을 위한 메인 함수 \end{DoxyCompactList}\item 
+\hyperlink{structserver__t}{server\-\_\-t} $\ast$ \hyperlink{server_8c_aa5664d4df8364715518c29c1b012f033}{server\-\_\-init} ()
+\begin{DoxyCompactList}\small\item\em server 객체를 생성하고 초기화하는 함수 \end{DoxyCompactList}\item 
+void \hyperlink{server_8c_a247d4c50ac76fb272765ba165fd5dba5}{server\-\_\-destroy} (\hyperlink{structserver__t}{server\-\_\-t} $\ast$server)
+\begin{DoxyCompactList}\small\item\em server 객체를 삭제하기 위한 함수 \end{DoxyCompactList}\item 
+void \hyperlink{server_8c_ad65a1380cc66e35c2e86060186bb5f57}{server\-\_\-process\-\_\-data} (\hyperlink{structserver__t}{server\-\_\-t} $\ast$server)
+\begin{DoxyCompactList}\small\item\em client에서 오는 명령에 따라 mysql에 요청하고 응답을 받아 다시 client에 응답하는 함수 \end{DoxyCompactList}\item 
+void \hyperlink{server_8c_a1475a53bbe62fe9a6eaa2637b2c85d12}{server\-\_\-add\-\_\-data} (\hyperlink{structserver__t}{server\-\_\-t} $\ast$server)
+\begin{DoxyCompactList}\small\item\em My\-S\-Q\-L의 books 테이블에 데이터 추가를 요청하는 함수 \end{DoxyCompactList}\item 
+void \hyperlink{server_8c_ad7f0f8ffc54021d5c8b158d3d83f47db}{server\-\_\-display\-\_\-data} (\hyperlink{structserver__t}{server\-\_\-t} $\ast$server)
+\begin{DoxyCompactList}\small\item\em My\-S\-Q\-L의 books 테이블의 모든 데이터들을 표시하는 요청을 보내는 함수 \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{server_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}{\index{server.\-c@{server.\-c}!main@{main}}
+\index{main@{main}!server.c@{server.\-c}}
+\subsubsection[{main}]{\setlength{\rightskip}{0pt plus 5cm}int main (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{server_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}
+
+
+server 실행을 위한 메인 함수 
+
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+
+
+Definition at line 21 of file server.\-c.
+
+\hypertarget{server_8c_a1475a53bbe62fe9a6eaa2637b2c85d12}{\index{server.\-c@{server.\-c}!server\-\_\-add\-\_\-data@{server\-\_\-add\-\_\-data}}
+\index{server\-\_\-add\-\_\-data@{server\-\_\-add\-\_\-data}!server.c@{server.\-c}}
+\subsubsection[{server\-\_\-add\-\_\-data}]{\setlength{\rightskip}{0pt plus 5cm}void server\-\_\-add\-\_\-data (
+\begin{DoxyParamCaption}
+\item[{{\bf server\-\_\-t} $\ast$}]{server}
+\end{DoxyParamCaption}
+)}}\label{server_8c_a1475a53bbe62fe9a6eaa2637b2c85d12}
+
+
+My\-S\-Q\-L의 books 테이블에 데이터 추가를 요청하는 함수 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+\begin{DoxyParams}{Parameters}
+{\em server} & 데이터 추가를 요청할 server 객체 \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 126 of file server.\-c.
+
+\hypertarget{server_8c_a247d4c50ac76fb272765ba165fd5dba5}{\index{server.\-c@{server.\-c}!server\-\_\-destroy@{server\-\_\-destroy}}
+\index{server\-\_\-destroy@{server\-\_\-destroy}!server.c@{server.\-c}}
+\subsubsection[{server\-\_\-destroy}]{\setlength{\rightskip}{0pt plus 5cm}void server\-\_\-destroy (
+\begin{DoxyParamCaption}
+\item[{{\bf server\-\_\-t} $\ast$}]{server}
+\end{DoxyParamCaption}
+)}}\label{server_8c_a247d4c50ac76fb272765ba165fd5dba5}
+
+
+server 객체를 삭제하기 위한 함수 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+\begin{DoxyParams}{Parameters}
+{\em server} & 삭제할 server 객체 \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 71 of file server.\-c.
+
+\hypertarget{server_8c_ad7f0f8ffc54021d5c8b158d3d83f47db}{\index{server.\-c@{server.\-c}!server\-\_\-display\-\_\-data@{server\-\_\-display\-\_\-data}}
+\index{server\-\_\-display\-\_\-data@{server\-\_\-display\-\_\-data}!server.c@{server.\-c}}
+\subsubsection[{server\-\_\-display\-\_\-data}]{\setlength{\rightskip}{0pt plus 5cm}void server\-\_\-display\-\_\-data (
+\begin{DoxyParamCaption}
+\item[{{\bf server\-\_\-t} $\ast$}]{server}
+\end{DoxyParamCaption}
+)}}\label{server_8c_ad7f0f8ffc54021d5c8b158d3d83f47db}
+
+
+My\-S\-Q\-L의 books 테이블의 모든 데이터들을 표시하는 요청을 보내는 함수 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+\begin{DoxyParams}{Parameters}
+{\em server} & My\-S\-Q\-L에 요청을 보낼 server 객체 \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 143 of file server.\-c.
+
+\hypertarget{server_8c_aa5664d4df8364715518c29c1b012f033}{\index{server.\-c@{server.\-c}!server\-\_\-init@{server\-\_\-init}}
+\index{server\-\_\-init@{server\-\_\-init}!server.c@{server.\-c}}
+\subsubsection[{server\-\_\-init}]{\setlength{\rightskip}{0pt plus 5cm}{\bf server\-\_\-t} $\ast$ server\-\_\-init (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{server_8c_aa5664d4df8364715518c29c1b012f033}
+
+
+server 객체를 생성하고 초기화하는 함수 
+
+\begin{DoxyReturn}{Returns}
+생성 후 초기화된 server 객체 
+\end{DoxyReturn}
+
+
+Definition at line 34 of file server.\-c.
+
+\hypertarget{server_8c_ad65a1380cc66e35c2e86060186bb5f57}{\index{server.\-c@{server.\-c}!server\-\_\-process\-\_\-data@{server\-\_\-process\-\_\-data}}
+\index{server\-\_\-process\-\_\-data@{server\-\_\-process\-\_\-data}!server.c@{server.\-c}}
+\subsubsection[{server\-\_\-process\-\_\-data}]{\setlength{\rightskip}{0pt plus 5cm}void server\-\_\-process\-\_\-data (
+\begin{DoxyParamCaption}
+\item[{{\bf server\-\_\-t} $\ast$}]{server}
+\end{DoxyParamCaption}
+)}}\label{server_8c_ad65a1380cc66e35c2e86060186bb5f57}
+
+
+client에서 오는 명령에 따라 mysql에 요청하고 응답을 받아 다시 client에 응답하는 함수 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+\begin{DoxyParams}{Parameters}
+{\em server} & 명령을 처리할 server 객체 \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 86 of file server.\-c.
+

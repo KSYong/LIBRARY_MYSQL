@@ -1,4 +1,4 @@
-# mysql_udp_socket_test
+# MYSQL_UDP_TEST
 Library which you can add and display.
 
   1. env : CentOS Linux release 7.5.1804(Core)

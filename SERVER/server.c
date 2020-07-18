@@ -34,27 +34,28 @@ int main(){
 server_t* server_init(){
     server_t* server = (server_t*)malloc(sizeof(server_t));
 
-    server->mysql = mysql_init(NULL);
-    
-    if (mysql_real_connect(server->mysql, "localhost", "eric", "Eric0054!", "Books", 0, NULL, 0)==NULL){
-        perror("mysql connection failed!!");
-        return -1;
-    }
-
-    if((server->sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0){
+	int fd = 0;
+	fd = socket(AF_INET, SOCK_DGRAM, 0);
+    if((fd < 0){
         perror("socket creation failed!");
         free(server);
         return -1;        
     }
+	else{
+		server->sockfd = fd;
+	}
 
     memset(&server->server_addr, 0, sizeof(server->server_addr));
     memset(&server->client_addr, 0, sizeof(server->client_addr));
+	memset(&server->database_addr, 0, sizeof(server->database_addr));
 
     server->server_addr.sin_family = AF_INET;
     server->server_addr.sin_port = htons(PORT);
     server->server_addr.sin_addr.s_addr = INADDR_ANY;
-
-    if( bind(server->sockfd, (const struct sockaddr*)&server->server_addr, sizeof(server->server_addr)) < 0 ){
+	
+	int rv = 0;
+	rv = bind(server->sockfd, (const struct sockaddr*)&server->server_addr, sizeof(server->server_addr));
+    if( rv  < 0 ){
         perror("bind failed!");
         free(server);
         return -1;
@@ -70,11 +71,12 @@ server_t* server_init(){
  */
 void server_destroy(server_t* server){
     if (server){
-        if (close(server->sockfd) == -1){
+		int rv = 0;
+		rv = close(server->sockfd);
+        if (rv  == -1){
             perror("close failed!");
             return -1;
         }
-        mysql_close(server->mysql);
         free(server);
     }
     else{
@@ -133,14 +135,12 @@ void server_process_data(server_t* server){
  */
 void server_add_data(server_t* server){
     if (server){
-        if (mysql_query(server->mysql, "INSERT INTO books VALUES(3, 'title4', 'author4')")){
-            fprintf(stderr, "%s\n", mysql_error(server->mysql));
-            mysql_close(server->mysql);
-            return -1;
-        }
-        else{
-            printf("Data added to DB\n");
-        }
+        if(sendto(server->sockfd, (const char*)add, strlen(add), MSG_CONFIRM, (struct sockaddr*)&(server->client_addr), len) <= 0){
+			perror("server to database data send failed!!!");
+		}
+		else{
+			printf("Response sent from server to database\n");
+		}
     }
      else{
         perror("couldn't get server object!");
@@ -156,29 +156,6 @@ void server_add_data(server_t* server){
  */
 void server_display_data(server_t* server){
     if (server){
-        if(mysql_query(server->mysql, "SELECT * FROM books")){
-            fprintf(stderr, "%s\n", mysql_error(server->mysql));
-            mysql_close(server->mysql);
-            return -1;
-        }
-        else{
-            printf("Data displayed from DB\n");
-        }
-
-        MYSQL_RES *result = mysql_store_result(server->mysql);
-        int num_fields = mysql_num_fields(result);
-        MYSQL_ROW row;
-
-        while(row = mysql_fetch_row(result)){
-            for(int i = 0; i < num_fields; i++){
-                printf("%s  ", row[i] ? row[i] : "NULL");
-            }
-            printf("\n");
-        }
-        mysql_free_result(result);
-    }
-    else{
-        perror("couldn't get server object!");
-        return -1;
-    }
+		if(sendto(server->sockfd, (const char*)display, strlen(display), MSG_CONFIRM, (struct sockaddr*)&(server->client_addr), len) <= 0){
+			perror("server to database data send failed!
 }

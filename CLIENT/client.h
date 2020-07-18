@@ -13,7 +13,7 @@
 #include <netinet/in.h>
 
 #define BUF_MAX_LEN 1024 
-#define PORT 8080
+#define PORT 7070
 
 /// @struct client_t
 /// @brief server에게 메시지를 보내고 그 응답을 받기 위한 구조체

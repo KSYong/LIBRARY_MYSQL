@@ -10,40 +10,34 @@ int main(){
 
 database_t* database_init(){
 	database_t* database = (database_t*)malloc(sizeof(database_t));
-	
 	if (database == NULL){
 		perror("database malloc failed!!!");
 		return -1;
 	}
-
 	database->mysql = mysql_init(NULL);
-	
 	if (database->mysql == NULL){
 		perror("database->mysql initiation failed!!!");
 		return -1;
 	}
-
 	if (mysql_real_connect(database->mysql, "localhost", "eric", "Eric0054!", "Books", 0, NULL, 0) == NULL){
 		perror("mysql connection failed!!!");
 		return -1;
 	}
-
 	database->sockfd = socket(AF_INET, SOCK_DGAM, 0);
-
 	if (database->sockfd < 0){
 		perror("socket creation failed!!!");
 		free(database);
 		return -1;
 	}
 
+	memset(&database->database_addr, 0, sizeof(database->database_addr));
 	memset(&database->server_addr, 0, sizeof(database->server_addr));
-	memset(&database->client_addr, 0, sizeof(database->client_addr));
 
-	database->server_addr.sin_family = AF_INET;
-	database->server_addr.sin_port = htons(PORT);
-	database->server_addr.sin_addr.s_addr = INADDR_ANY;
+	database->database_addr.sin_family = AF_INET;
+	database->database_addr.sin_port = htons(DATABASE_PORT);
+	database->database_addr.sin_addr.s_addr = INADDR_ANY;
 
-	if (bind(database->sockfd, (const struct sockaddr*)&database->server_addr, sizeof(database->server_addr))<0){
+	if (bind(database->sockfd, (const struct sockaddr*)&database->database_addr, sizeof(database->database_addr))<0){
 		perror("bind failed!!!");
 		free(database);
 		return -1;
@@ -73,9 +67,10 @@ void database_process_data(database_t* database){
 		const char* add = "add";
 		const char* display = "display";
 		const char* response = "command successfully executed.";
-		socklen_t len = sizeof(database->client_addr);
+		socklen_t len = sizeof(database->server_addr);
 
-		recv_byte = recvfrom(database->sockfd, (char *)buffer, BUF_MAX_LEN,MSG_WAITALL,(struct sockaddr*)&(database->client_addr), &len);
+		// recv data from server
+		recv_byte = recvfrom(database->sockfd, (char *)buffer, BUF_MAX_LEN,MSG_WAITALL,(struct sockaddr*)&(database->server_addr), &len);
 		
 		if(recv_byte > 0){
 			buffer[recv_byte = '\0';
@@ -90,8 +85,8 @@ void database_process_data(database_t* database){
 		else{
 			perror("receiving data from client failed!!!");
 		}
-
-		if(sendto(database->sockfd, (const char*)response, strlen(response), MSG_CONFIRM, (struct sockaddr*)&(database->client_addr), len) <= 0){
+		// return data to server
+		if(sendto(database->sockfd, (const char*)response, strlen(response), MSG_CONFIRM, (struct sockaddr*)&(database->server_addr), len) <= 0){
 			perror("database to server data send failed!!!");
 		}
 		else{
@@ -106,7 +101,7 @@ void database_process_data(database_t* database){
 
 void database_add_data(database_t* database){
 	if(database){
-		if(mysql_query(database->mysql, "INSERT INTO books VALUES(4, 'title5', 'author5')")){
+		if(mysql_query(database->mysql, "INSERT INTO books VALUES(5, 'title6', 'author6')")){
 			fprintf(stderr, "%s\n", mysql_error(database->mysql));
 			mysql_close(database->mysql);
 			return -1;

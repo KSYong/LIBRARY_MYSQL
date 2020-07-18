@@ -45,14 +45,18 @@ server_t* server_init(){
 		server->sockfd = fd;
 	}
 
+    memset(&server->database_addr, 0, sizeof(server->database_addr));
     memset(&server->server_addr, 0, sizeof(server->server_addr));
     memset(&server->client_addr, 0, sizeof(server->client_addr));
-	memset(&server->database_addr, 0, sizeof(server->database_addr));
-
+	
     server->server_addr.sin_family = AF_INET;
-    server->server_addr.sin_port = htons(PORT);
+    server->server_addr.sin_port = htons(SERVER_PORT);
     server->server_addr.sin_addr.s_addr = INADDR_ANY;
 	
+    server->database_addr.sin_family = AF_INET;
+    server->database_addr.sin_port = htons(DATABASE_PORT);
+    server->database_addr.sin_addr.s_addr = INADDR_ANY;
+
 	int rv = 0;
 	rv = bind(server->sockfd, (const struct sockaddr*)&server->server_addr, sizeof(server->server_addr));
     if( rv  < 0 ){
@@ -95,16 +99,18 @@ void server_process_data(server_t* server){
     if(server){
         ssize_t recv_byte;
         char buffer[BUF_MAX_LEN];
-        const char * add = "add";
-        const char * display = "display";
-        const char *response = "Command successfully executed.";
+        const char* add = "add";
+        const char* display = "display";
+        const char* response = "Command successfully executed.";
         socklen_t len =  sizeof(server->client_addr);
 
+        //client에서 명령 받음 
         recv_byte = recvfrom(server->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr*) &(server->client_addr), &len);
         if (recv_byte > 0){
             buffer[recv_byte] = '\0';
             printf("Client : %s\n", buffer);
             if (memcmp(buffer, add, sizeof("add")) == 0){
+                //database로 요청 시작
                 server_add_data(server);
             }
             else if (memcmp(buffer, display, sizeof("display"))==0 ){
@@ -114,6 +120,7 @@ void server_process_data(server_t* server){
         else{
             perror("receiving data from client failed!!!");
         }
+        //client로 응답 보냄 
         if(sendto(server->sockfd, (const char*)response, strlen(response),  MSG_CONFIRM, (struct sockaddr*)&(server->client_addr), len) <= 0){
             perror("server to client data send failed!!!");
         }
@@ -134,13 +141,32 @@ void server_process_data(server_t* server){
  * @param server 데이터 추가를 요청할 server 객체
  */
 void server_add_data(server_t* server){
+    //database로 요청 시작 
+    ssize_t send_byte;
+    ssize_t recv_byte;
+    const char* add = "add";
+    char buffer[BUF_MAX_LEN];
+    socklen_t len = sizeof(server->database_addr);
     if (server){
-        if(sendto(server->sockfd, (const char*)add, strlen(add), MSG_CONFIRM, (struct sockaddr*)&(server->client_addr), len) <= 0){
-			perror("server to database data send failed!!!");
+        send_byte = sendto(server->sockfd, (const char*)add, strlen(add), MSG_CONFIRM, (struct sockaddr*)&(server->database_addr), len);
+        if(send_byte > 0){
+            printf("request sent from server to database\n");
+            printf("server to database send success\n");
 		}
 		else{
-			printf("Response sent from server to database\n");
+            perror("server to database data send failed!!!");
+            return -1;
 		}
+        recv_byte = recvfrom(server->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr*) &(server->database_addr), &len);
+        if(recv_byte > 0){
+            buffer[recv_byte] = '\0';
+            printf("Database : %s\n", buffer);
+            printf("Return from Database to Server confirmed!\n");
+        }
+        else{
+            perror("Return from database to server failed!");
+            return -1;
+        }
     }
      else{
         perror("couldn't get server object!");

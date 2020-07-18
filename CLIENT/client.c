@@ -38,7 +38,7 @@ client_t* client_init(){
     memset(&client->server_addr, 0, sizeof(client->server_addr));
 
     client->server_addr.sin_family = AF_INET;
-    client->server_addr.sin_port = htons(PORT);
+    client->server_addr.sin_port = htons(SERVER_PORT);
     client->server_addr.sin_addr.s_addr = INADDR_ANY;
 
     return client;

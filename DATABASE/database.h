@@ -14,15 +14,17 @@
 #include <mysql.h>
 
 #define BUF_MAX_LEN 1024
-#define PORT 9090
+#define CLIENT_PORT 7070
+#define SERVER_PORT 8080
+#define DATABASE_PORT 9090
 
 
 typedef struct database_s database_t;
 struct database_s{
 	MYSQL mysql;
 	int sockfd;
+	struct sockaddr_in database_addr;
 	struct sockaddr_in server_addr;
-	struct sockaddr_in client_addr;
 };
 
 database_t* database_init();

@@ -23,7 +23,7 @@ database_t* database_init(){
 		perror("mysql connection failed!!!");
 		return -1;
 	}
-	database->sockfd = socket(AF_INET, SOCK_DGAM, 0);
+	database->sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 	if (database->sockfd < 0){
 		perror("socket creation failed!!!");
 		free(database);
@@ -52,7 +52,7 @@ void database_destroy(database_t* database){
 			return -1;
 		}
 		mysql_close(database->mysql);
-		free(server);
+		free(database);
 	}
 	else{
 		perror("couldn't get database  object!");
@@ -73,7 +73,7 @@ void database_process_data(database_t* database){
 		recv_byte = recvfrom(database->sockfd, (char *)buffer, BUF_MAX_LEN,MSG_WAITALL,(struct sockaddr*)&(database->server_addr), &len);
 		
 		if(recv_byte > 0){
-			buffer[recv_byte = '\0';
+			buffer[recv_byte] = '\0';
 			printf("Client : %s\n", buffer);
 			if(memcmp(buffer, add, sizeof("add")) == 0){
 				database_add_data(database);

@@ -21,7 +21,7 @@
 
 typedef struct database_s database_t;
 struct database_s{
-	MYSQL mysql;
+	MYSQL *mysql;
 	int sockfd;
 	struct sockaddr_in database_addr;
 	struct sockaddr_in server_addr;

@@ -36,7 +36,7 @@ server_t* server_init(){
 
 	int fd = 0;
 	fd = socket(AF_INET, SOCK_DGRAM, 0);
-    if((fd < 0){
+    if(fd < 0){
         perror("socket creation failed!");
         free(server);
         return -1;        
@@ -150,7 +150,7 @@ void server_add_data(server_t* server){
     if (server){
         send_byte = sendto(server->sockfd, (const char*)add, strlen(add), MSG_CONFIRM, (struct sockaddr*)&(server->database_addr), len);
         if(send_byte > 0){
-            printf("request sent from server to database\n");
+            printf("add request sent from server to database\n");
             printf("server to database send success\n");
 		}
 		else{
@@ -182,6 +182,35 @@ void server_add_data(server_t* server){
  */
 void server_display_data(server_t* server){
     if (server){
-		if(sendto(server->sockfd, (const char*)display, strlen(display), MSG_CONFIRM, (struct sockaddr*)&(server->client_addr), len) <= 0){
-			perror("server to database data send failed!
+		ssize_t send_byte;
+        ssize_t recv_byte;
+        const char* display = "display";
+        char buffer[BUF_MAX_LEN];
+        socklen_t len = sizeof(server->database_addr);
+        if (server){
+            send_byte = sendto(server->sockfd, (const char*)display, strlen(display), MSG_CONFIRM, (struct sockaddr*)&(server->database_addr), len);
+            if(send_byte > 0){
+                printf("display request sent from server to database\n");
+                printf("server to database send success\n");
+            }
+            else{
+                perror("server to database data send failed!!!");
+                return -1;
+            }
+            recv_byte = recvfrom(server->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr*) &(server->database_addr), &len);
+            if(recv_byte > 0){
+                buffer[recv_byte] = '\0';
+                printf("Database : %s\n", buffer);
+                printf("Return from Database to Server confirmed!\n");
+            }
+            else{
+                perror("Return from database to server failed!");
+                return -1;
+            }
+        }
+        else{
+            perror("couldn't get server object!");
+            return -1;
+        }
+    }
 }

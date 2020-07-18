@@ -13,7 +13,9 @@
 #include <netinet/in.h>
 
 #define BUF_MAX_LEN 1024
-#define PORT 8080
+#define CLIENT_PORT 7070
+#define SERVER_PORT 8080
+#define DATABASE_PORT 9090
 
 /// @struct server_t
 /// @brief client의 메시지 요청에 대한 응답을 처리하기 위한 구조체

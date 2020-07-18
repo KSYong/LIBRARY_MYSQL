@@ -128,7 +128,7 @@ void database_display_data(database_t* database){
 		}
 		MYSQL_RES* result = mysql_store_result(database->mysql);
 		int num_fields = mysql_num_fields(result);
-		MYSQL_RoW row;
+		MYSQL_ROW row;
 
 		while(row = mysql_fetch_row(result)){
 			for(int i = 0; i < num_fields; i++){

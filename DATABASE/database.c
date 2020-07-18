@@ -19,7 +19,7 @@ database_t* database_init(){
 		perror("database->mysql initiation failed!!!");
 		return -1;
 	}
-	if (mysql_real_connect(database->mysql, "localhost", "eric", "Eric0054!", "Books", 0, NULL, 0) == NULL){
+	if (mysql_real_connect(database->mysql, "localhost", "eric", "pw123", "Books", 0, NULL, 0) == NULL){
 		perror("mysql connection failed!!!");
 		return -1;
 	}
@@ -101,7 +101,7 @@ void database_process_data(database_t* database){
 
 void database_add_data(database_t* database){
 	if(database){
-		if(mysql_query(database->mysql, "INSERT INTO books VALUES(5, 'title6', 'author6')")){
+		if(mysql_query(database->mysql, "INSERT INTO Books VALUES(NULL, 'title', 'author')")){
 			fprintf(stderr, "%s\n", mysql_error(database->mysql));
 			mysql_close(database->mysql);
 			return -1;
@@ -118,7 +118,7 @@ void database_add_data(database_t* database){
 
 void database_display_data(database_t* database){
 	if(database){
-		if(mysql_query(database->mysql, "SELECT * FROM books")){
+		if(mysql_query(database->mysql, "SELECT * FROM Books")){
 			fprintf(stderr, "%s\n", mysql_error(database->mysql));
 			mysql_close(database->mysql);
 			return -1;

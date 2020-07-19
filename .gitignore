@@ -1,1 +1,7 @@
 *.o
+*.exp
+*.exe
+*.out
+*.app
+*.hex
+*.x86_64

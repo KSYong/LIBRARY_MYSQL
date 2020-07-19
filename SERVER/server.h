@@ -25,7 +25,9 @@ struct server_s{
     int sockfd;
     /// server의 socket address
     struct sockaddr_in server_addr;
+    /// client의 socket address
     struct sockaddr_in client_addr;
+    /// database의 socket address
 	struct sockaddr_in database_addr;
 };
 

@@ -7,14 +7,17 @@
  * @param argc 매개변수 개수
  * @param argv server에 전달할 명령어 
  */
-int main(int argc, char** argv){
-    client_t* client = client_init();
-    if ( argc == 2){
-		if (memcmp(argv[1], "add", sizeof("add"))==0){
-            printf("client added\n");
+int main(int argc, char **argv)
+{
+    client_t *client = client_init();
+    if (argc == 2)
+    {
+        if (memcmp(argv[1], "add", sizeof("add")) == 0)
+        {
             client_add_data(client);
         }
-        else if (memcmp(argv[1], "display", sizeof("display"))==0){
+        else if (memcmp(argv[1], "display", sizeof("display")) == 0)
+        {
             client_display_data(client);
         }
     }
@@ -26,11 +29,18 @@ int main(int argc, char** argv){
  * @brief client 객체를 생성하고 초기화하는 함수
  * @return 생성 후 초기화된 client 객체
  */
-client_t* client_init(){    
-    client_t* client = (client_t*)malloc(sizeof(client_t));
+client_t *client_init()
+{
+    client_t *client;
+    if ((client = (client_t *)malloc(sizeof(client_t))) == NULL)
+    {
+        perror("Failed! malloc failure");
+        return -1;
+    }
 
-    if((client->sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0){
-        perror("socket creation failed!");
+    if ((client->sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    {
+        perror("Failed! socket creation failure");
         free(client);
         return -1;
     }
@@ -50,15 +60,19 @@ client_t* client_init(){
  * @return void
  * @param client 삭제할 client 객체
  */
-void client_destroy(client_t* client){
-    if (client){
-        if (close(client->sockfd) == -1){
-        perror("close failed!");
+void client_destroy(client_t *client)
+{
+    if (client)
+    {
+        if (close(client->sockfd) == -1)
+        {
+            perror("Failed! socket close failure!");
         }
         free(client);
     }
-    else{
-        perror("client deliver to destroy function failed!");
+    else
+    {
+        perror("Failed! client object pass failure");
         return -1;
     }
 }
@@ -69,31 +83,40 @@ void client_destroy(client_t* client){
  * @return void
  * @param client 요청을 하기 위한 client 객체
  */
-void client_add_data(client_t* client){
-	if(client){
+void client_add_data(client_t *client)
+{
+    if (client)
+    {
+        printf("Success! client requesting add command to server start\n");
+        const char *add = "add";
+        char buffer[BUF_MAX_LEN];
+        ssize_t send_byte;
+        ssize_t recv_byte;
         socklen_t len = sizeof(client->server_addr);
-   		const char *add = "add";
-   		if((sendto(client->sockfd, add, strlen(add), MSG_CONFIRM, (const struct sockaddr*) &(client->server_addr), len)<=0)){
-        	perror("client to server send failed!");
-        	return -1;
-    	}
-    	else{
-        	printf("add message sent from client to server\n");
-    	}
 
-    	char buffer[BUF_MAX_LEN];
-    	ssize_t recv_byte;
-    	recv_byte = recvfrom(client->sockfd, (char*) buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr*)&(client->server_addr), &len);
-    	if(recv_byte > 0){
-        	buffer[recv_byte] = '\0';
-        	printf("Server : %s\n", buffer);
-    	}
-    	else{
-        	perror("receiving data from server failed!!");
-        	return -1;
-    	}
-	}
-} 
+        send_byte = sendto(client->sockfd, add, strlen(add), MSG_CONFIRM, (const struct sockaddr *)&(client->server_addr), len);
+        if ((send_byte <= 0))
+        {
+            perror("Failed! client to server send failure");
+            return -1;
+        }
+        else
+        {
+            printf("Success! add command sent from client to server\n");
+        }
+        recv_byte = recvfrom(client->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(client->server_addr), &len);
+        if (recv_byte > 0)
+        {
+            buffer[recv_byte] = '\0';
+            printf("Server response : %s\n", buffer);
+        }
+        else
+        {
+            perror("Failed! receiving data from server failure");
+            return -1;
+        }
+    }
+}
 
 /**
  * @fn void client_display_data(client_t* client)
@@ -101,29 +124,35 @@ void client_add_data(client_t* client){
  * @return void
  * @param client 요청을 하기 위한 client 객체
  */
-void client_display_data(client_t* client){
+void client_display_data(client_t *client)
+{
+    printf("Success! client requesting display command to server start\n");
     const char *display = "display";
+    char buffer[BUF_MAX_LEN];
+    ssize_t send_byte;
+    ssize_t recv_byte;
     socklen_t len = sizeof(client->server_addr);
-    if((sendto(client->sockfd, display, strlen(display), 0, (struct sockaddr*) &(client->server_addr), len)<=0)){
-        perror("client to server send failed!");
+
+    send_byte = sendto(client->sockfd, display, strlen(display), 0, (struct sockaddr *)&(client->server_addr), len);
+    if (send_byte <= 0)
+    {
+        perror("Failed! client to server send failure");
         return -1;
     }
-    else{
-        printf("display message send from client to server\n");
+    else
+    {
+        printf("Success! display command sent from client to server\n");
     }
 
-    char buffer[BUF_MAX_LEN];
-    ssize_t recv_byte;
-    recv_byte = recvfrom(client->sockfd, (char*) buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr*)&(client->server_addr), &len);
-    if(recv_byte > 0){
+    recv_byte = recvfrom(client->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(client->server_addr), &len);
+    if (recv_byte > 0)
+    {
         buffer[recv_byte] = '\0';
-        printf("Server : %s\n", buffer);
+        printf("Server response : %s\n", buffer);
     }
-    else{
-        perror("receiving data from server failed!!");
+    else
+    {
+        perror("Failed! receiving data from server failure");
         return -1;
     }
 }
-
-
-

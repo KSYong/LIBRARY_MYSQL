@@ -21,7 +21,11 @@ struct \hyperlink{structclient__s}{client\-\_\-s}
 \item 
 \#define \hyperlink{client_8h_aae114cdd7784a59af222f175dac6312b}{B\-U\-F\-\_\-\-M\-A\-X\-\_\-\-L\-E\-N}~1024
 \item 
-\#define \hyperlink{client_8h_a614217d263be1fb1a5f76e2ff7be19a2}{P\-O\-R\-T}~8080
+\#define \hyperlink{client_8h_a653e745f64132435aea89e460c4d460d}{C\-L\-I\-E\-N\-T\-\_\-\-P\-O\-R\-T}~7070
+\item 
+\#define \hyperlink{client_8h_ac42367fe5c999ec6650de83e9d72fe8c}{S\-E\-R\-V\-E\-R\-\_\-\-P\-O\-R\-T}~8080
+\item 
+\#define \hyperlink{client_8h_a4597cabcd99652f73befb4c659c95893}{D\-A\-T\-A\-B\-A\-S\-E\-\_\-\-P\-O\-R\-T}~9090
 \end{DoxyCompactItemize}
 \subsection*{Typedefs}
 \begin{DoxyCompactItemize}
@@ -56,12 +60,26 @@ Definition at line 4 of file client.\-h.
 
 Definition at line 15 of file client.\-h.
 
-\hypertarget{client_8h_a614217d263be1fb1a5f76e2ff7be19a2}{\index{client.\-h@{client.\-h}!P\-O\-R\-T@{P\-O\-R\-T}}
-\index{P\-O\-R\-T@{P\-O\-R\-T}!client.h@{client.\-h}}
-\subsubsection[{P\-O\-R\-T}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\-O\-R\-T~8080}}\label{client_8h_a614217d263be1fb1a5f76e2ff7be19a2}
+\hypertarget{client_8h_a653e745f64132435aea89e460c4d460d}{\index{client.\-h@{client.\-h}!C\-L\-I\-E\-N\-T\-\_\-\-P\-O\-R\-T@{C\-L\-I\-E\-N\-T\-\_\-\-P\-O\-R\-T}}
+\index{C\-L\-I\-E\-N\-T\-\_\-\-P\-O\-R\-T@{C\-L\-I\-E\-N\-T\-\_\-\-P\-O\-R\-T}!client.h@{client.\-h}}
+\subsubsection[{C\-L\-I\-E\-N\-T\-\_\-\-P\-O\-R\-T}]{\setlength{\rightskip}{0pt plus 5cm}\#define C\-L\-I\-E\-N\-T\-\_\-\-P\-O\-R\-T~7070}}\label{client_8h_a653e745f64132435aea89e460c4d460d}
 
 
 Definition at line 16 of file client.\-h.
+
+\hypertarget{client_8h_a4597cabcd99652f73befb4c659c95893}{\index{client.\-h@{client.\-h}!D\-A\-T\-A\-B\-A\-S\-E\-\_\-\-P\-O\-R\-T@{D\-A\-T\-A\-B\-A\-S\-E\-\_\-\-P\-O\-R\-T}}
+\index{D\-A\-T\-A\-B\-A\-S\-E\-\_\-\-P\-O\-R\-T@{D\-A\-T\-A\-B\-A\-S\-E\-\_\-\-P\-O\-R\-T}!client.h@{client.\-h}}
+\subsubsection[{D\-A\-T\-A\-B\-A\-S\-E\-\_\-\-P\-O\-R\-T}]{\setlength{\rightskip}{0pt plus 5cm}\#define D\-A\-T\-A\-B\-A\-S\-E\-\_\-\-P\-O\-R\-T~9090}}\label{client_8h_a4597cabcd99652f73befb4c659c95893}
+
+
+Definition at line 18 of file client.\-h.
+
+\hypertarget{client_8h_ac42367fe5c999ec6650de83e9d72fe8c}{\index{client.\-h@{client.\-h}!S\-E\-R\-V\-E\-R\-\_\-\-P\-O\-R\-T@{S\-E\-R\-V\-E\-R\-\_\-\-P\-O\-R\-T}}
+\index{S\-E\-R\-V\-E\-R\-\_\-\-P\-O\-R\-T@{S\-E\-R\-V\-E\-R\-\_\-\-P\-O\-R\-T}!client.h@{client.\-h}}
+\subsubsection[{S\-E\-R\-V\-E\-R\-\_\-\-P\-O\-R\-T}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\-E\-R\-V\-E\-R\-\_\-\-P\-O\-R\-T~8080}}\label{client_8h_ac42367fe5c999ec6650de83e9d72fe8c}
+
+
+Definition at line 17 of file client.\-h.
 
 
 
@@ -71,7 +89,7 @@ Definition at line 16 of file client.\-h.
 \subsubsection[{client\-\_\-t}]{\setlength{\rightskip}{0pt plus 5cm}typedef struct {\bf client\-\_\-s} {\bf client\-\_\-t}}}\label{client_8h_a7bfebc8e763f36d1870198931d6b5eb1}
 
 
-Definition at line 20 of file client.\-h.
+Definition at line 22 of file client.\-h.
 
 
 
@@ -97,7 +115,7 @@ void
 \end{DoxyParams}
 
 
-Definition at line 72 of file client.\-c.
+Definition at line 86 of file client.\-c.
 
 \hypertarget{client_8h_a78c6ed6e74b3ce44da9950931b7d1381}{\index{client.\-h@{client.\-h}!client\-\_\-destroy@{client\-\_\-destroy}}
 \index{client\-\_\-destroy@{client\-\_\-destroy}!client.h@{client.\-h}}
@@ -120,7 +138,7 @@ void
 \end{DoxyParams}
 
 
-Definition at line 53 of file client.\-c.
+Definition at line 63 of file client.\-c.
 
 \hypertarget{client_8h_a075167f6395030489e0a63815bb26050}{\index{client.\-h@{client.\-h}!client\-\_\-display\-\_\-data@{client\-\_\-display\-\_\-data}}
 \index{client\-\_\-display\-\_\-data@{client\-\_\-display\-\_\-data}!client.h@{client.\-h}}
@@ -143,7 +161,7 @@ void
 \end{DoxyParams}
 
 
-Definition at line 104 of file client.\-c.
+Definition at line 127 of file client.\-c.
 
 \hypertarget{client_8h_af21475138048fb4203362940473e97ee}{\index{client.\-h@{client.\-h}!client\-\_\-init@{client\-\_\-init}}
 \index{client\-\_\-init@{client\-\_\-init}!client.h@{client.\-h}}
@@ -161,5 +179,5 @@ client 객체를 생성하고 초기화하는 함수
 \end{DoxyReturn}
 
 
-Definition at line 29 of file client.\-c.
+Definition at line 32 of file client.\-c.
 

@@ -112,16 +112,15 @@ void server_process_data(server_t *server)
         const char *add = "add";
         const char *display = "display";
         const char *response = "Success! Command successfully executed.";
-
         //client에서 명령 받음
         recv_byte = recvfrom(server->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(server->client_addr), &len);
         if (recv_byte > 0)
         {
+            //databaes로 요청 시작
             buffer[recv_byte] = '\0';
             printf("Client request : %s\n", buffer);
             if (memcmp(buffer, add, sizeof("add")) == 0)
             {
-                //database로 요청 시작
                 server_add_data(server);
             }
             else if (memcmp(buffer, display, sizeof("display")) == 0)
@@ -132,12 +131,14 @@ void server_process_data(server_t *server)
         else
         {
             perror("Failed! receiving data from client failure");
+            return -1;
         }
         //client로 응답 보냄
         send_byte = sendto(server->sockfd, (const char *)response, strlen(response), MSG_CONFIRM, (struct sockaddr *)&(server->client_addr), len);
         if (send_byte <= 0)
         {
             perror("Failed! server to client data send failure");
+            return -1;
         }
         else
         {
@@ -153,7 +154,7 @@ void server_process_data(server_t *server)
 
 /**
  * @fn void server_add_data(server_t* server)
- * @brief MySQL의 books 테이블에 데이터 추가를 요청하는 함수
+ * @brief database에 row 추가 요청을 보내고 그 결과를 client에 전송하는 함수
  * @return void
  * @param server 데이터 추가를 요청할 server 객체
  */
@@ -161,15 +162,15 @@ void server_add_data(server_t *server)
 {
     if (server)
     {
-        //database로 요청 시작
         printf("Success! server requesting database start\n");
         ssize_t send_byte;
         ssize_t recv_byte;
         const char *add = "add";
         char buffer[BUF_MAX_LEN];
-        socklen_t len = sizeof(server->database_addr);
-
-        send_byte = sendto(server->sockfd, (const char *)add, strlen(add), MSG_CONFIRM, (struct sockaddr *)&(server->database_addr), len);
+        socklen_t dat_len = sizeof(server->database_addr);
+        socklen_t cli_len = sizeof(server->client_addr);
+        // database로 add 명령 전송
+        send_byte = sendto(server->sockfd, (const char *)add, strlen(add), MSG_CONFIRM, (struct sockaddr *)&(server->database_addr), dat_len);
         if (send_byte > 0)
         {
             printf("Success! add request sent from server to database\n");
@@ -179,7 +180,54 @@ void server_add_data(server_t *server)
             perror("Failed! server to database data send failure");
             return -1;
         }
-        recv_byte = recvfrom(server->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(server->database_addr), &len);
+        //client에서 title 정보 받음
+        recv_byte = recvfrom(server->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(server->client_addr), &cli_len);
+        if (recv_byte > 0)
+        {
+            buffer[recv_byte] = '\0';
+            printf("From client .. title : %s\n", buffer);
+            //database로 title 정보 보냄
+            send_byte = sendto(server->sockfd, (const char *)buffer, strlen(buffer), MSG_CONFIRM, (struct sockaddr *)&(server->database_addr), dat_len);
+            if (send_byte > 0)
+            {
+                printf("Success! titlie information sent from server to database\n");
+            }
+            else
+            {
+                perror("Failed! server to database data send failure");
+                return -1;
+            }
+        }
+        else
+        {
+            perror("Failed! receiving data from client failure");
+            return -1;
+        }
+        // client에서 author 정보 받음
+        recv_byte = recvfrom(server->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(server->client_addr), &cli_len);
+        if (recv_byte > 0)
+        {
+            buffer[recv_byte] = '\0';
+            printf("From client .. author : %s\n", buffer);
+            //database로 author 정보 보냄
+            send_byte = sendto(server->sockfd, (const char *)buffer, strlen(buffer), MSG_CONFIRM, (struct sockaddr *)&(server->database_addr), dat_len);
+            if (send_byte > 0)
+            {
+                printf("Success! author information sent from server to database\n");
+            }
+            else
+            {
+                perror("Failed! server to database data send failure");
+                return -1;
+            }
+        }
+        else
+        {
+            perror("Failed! receiving data from client failure");
+            return -1;
+        }
+        // database로부터 성공 응답 받음
+        recv_byte = recvfrom(server->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(server->database_addr), &dat_len);
         if (recv_byte > 0)
         {
             buffer[recv_byte] = '\0';
@@ -201,7 +249,7 @@ void server_add_data(server_t *server)
 
 /**
  * @fn void server_display_data(server_t* server)
- * @brief MySQL의 books 테이블의 모든 데이터들을 표시하는 요청을 database에 보내고 그 응답을 client에 전달하는 함수
+ * @brief database의 모든 데이터들을 표시하는 요청을 database에 보내고 그 응답을 client에 전달하는 함수
  * @return void
  * @param server MySQL에 요청을 보낼  server 객체
  */
@@ -213,11 +261,12 @@ void server_display_data(server_t *server)
         ssize_t recv_byte;
         const char *display = "display";
         char buffer[BUF_MAX_LEN];
-        socklen_t len = sizeof(server->database_addr);
+        socklen_t dat_len = sizeof(server->database_addr);
+        socklen_t cli_len = sizeof(server->client_addr);
         if (server)
         {
             //request display to database
-            send_byte = sendto(server->sockfd, (const char *)display, strlen(display), MSG_CONFIRM, (struct sockaddr *)&(server->database_addr), len);
+            send_byte = sendto(server->sockfd, (const char *)display, strlen(display), MSG_CONFIRM, (struct sockaddr *)&(server->database_addr), dat_len);
             if (send_byte > 0)
             {
                 printf("Success! display request sent from server to database\n");
@@ -228,7 +277,7 @@ void server_display_data(server_t *server)
                 return -1;
             }
             //return display data from database
-            recv_byte = recvfrom(server->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(server->database_addr), &len);
+            recv_byte = recvfrom(server->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(server->database_addr), &dat_len);
             if (recv_byte > 0)
             {
                 buffer[recv_byte] = '\0';
@@ -236,7 +285,7 @@ void server_display_data(server_t *server)
                 printf("Success! Return from Database to Server confirmed!\n");
                 printf("Trying to send response to client\n");
                 //send display data to client
-                send_byte = sendto(server->sockfd, (const char *)buffer, strlen(buffer), MSG_CONFIRM, (struct sockaddr *)&(server->client_addr), len);
+                send_byte = sendto(server->sockfd, (const char *)buffer, strlen(buffer), MSG_CONFIRM, (struct sockaddr *)&(server->client_addr), cli_len);
                 if (send_byte <= 0)
                 {
                     perror("Failed! server to client data send failure");
@@ -252,7 +301,7 @@ void server_display_data(server_t *server)
                 return -1;
             }
             //get success data from databae
-            recv_byte = recvfrom(server->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(server->database_addr), &len);
+            recv_byte = recvfrom(server->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(server->database_addr), &dat_len);
             if (recv_byte > 0)
             {
                 buffer[recv_byte] = '\0';

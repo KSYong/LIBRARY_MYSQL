@@ -29,7 +29,8 @@ struct client_s{
 
 client_t* client_init();
 void client_destroy(client_t* client);
-void client_add_data(client_t* client);
+void client_add_data(client_t* client, char* title, char* author);
 void client_display_data(client_t* client);
-
+void client_send_data(client_t *client, char *send_buf);
+char* client_recv_data(client_t *client);
 #endif

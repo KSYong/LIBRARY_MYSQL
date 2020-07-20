@@ -12,13 +12,16 @@ int main(int argc, char **argv)
     client_t *client = client_init();
     if (argc == 2)
     {
-        if (memcmp(argv[1], "add", sizeof("add")) == 0)
-        {
-            client_add_data(client);
-        }
-        else if (memcmp(argv[1], "display", sizeof("display")) == 0)
+        if (memcmp(argv[1], "display", sizeof("display")) == 0)
         {
             client_display_data(client);
+        }
+    }
+    else if (argc == 4)
+    {
+        if (memcmp(argv[1], "add", sizeof("add")) == 0)
+        {
+            client_add_data(client, argv[2], argv[3]);
         }
     }
     client_destroy(client);
@@ -79,11 +82,11 @@ void client_destroy(client_t *client)
 
 /**
  * @fn void client_add_data(client_t* client)
- * @brief server로 add 명령을 보내고 응답을 받는 함수
+ * @brief server로 add 요청을 보내고 응답을 받는 함수
  * @return void
  * @param client 요청을 하기 위한 client 객체
  */
-void client_add_data(client_t *client)
+void client_add_data(client_t *client, char *title, char *author)
 {
     if (client)
     {
@@ -103,6 +106,28 @@ void client_add_data(client_t *client)
         else
         {
             printf("Success! add command sent from client to server\n");
+            // 서버에 title 정보 보냄
+            send_byte = sendto(client->sockfd, (const char*)title, strlen(title), MSG_CONFIRM, (const struct sockaddr *)&(client->server_addr), len);
+            if ((send_byte <= 0))
+            {
+                perror("Failed! client to server send failure");
+                return -1;
+            }
+            else
+            {
+                printf("Success! title sent from client to server\n");
+            }
+            // 서버에 author 정보 보냄
+            send_byte = sendto(client->sockfd, (const char*)author, strlen(author), MSG_CONFIRM, (const struct sockaddr *)&(client->server_addr), len);
+            if ((send_byte <= 0))
+            {
+                perror("Failed! client to server send failure");
+                return -1;
+            }
+            else
+            {
+                printf("Success! author sent from client to server\n");
+            }
         }
         //get success from server
         recv_byte = recvfrom(client->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(client->server_addr), &len);
@@ -151,11 +176,14 @@ void client_display_data(client_t *client)
             buffer[recv_byte] = '\0';
             int i = 0;
             int count = 0;
-            while(buffer[i] != NULL){
+            while (buffer[i] != NULL)
+            {
                 printf("%c", buffer[i]);
-                if (buffer[i] == ' '){     
+                if (buffer[i] == ' ')
+                {
                     count++;
-                    if(count == 3){
+                    if (count == 3)
+                    {
                         printf("%c", buffer[i]);
                         printf("\n");
                         count = 0;
@@ -182,4 +210,37 @@ void client_display_data(client_t *client)
         perror("Failed! receiving data from server failure");
         return -1;
     }
+}
+
+void client_send_data(client_t *client, char *send_buf)
+{
+    ssize_t send_byte;
+    socklen_t len = sizeof(client->server_addr);
+    send_byte = sendto(client->sockfd, (const char *)send_buf, strlen(send_buf), MSG_CONFIRM, (const struct sockaddr *)&(client->server_addr), len);
+    if ((send_byte <= 0))
+    {
+        perror("Failed! client to server send failure");
+        return -1;
+    }
+    else
+    {
+        printf("Success! add command sent from client to server\n");
+    }
+}
+
+char* client_recv_data(client_t *client){
+    char recv_buf[BUF_MAX_LEN];
+    ssize_t recv_byte;
+    socklen_t len = sizeof(client->server_addr);
+    recv_byte = recvfrom(client->sockfd, (char *)recv_buf, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(client->server_addr), &len);
+    if (recv_byte > 0)
+    {
+        recv_buf[recv_byte] = '\0';
+    }
+    else
+    {
+        perror("Failed! receiving data from server failure");
+        return -1;
+    }
+    return recv_buf;
 }

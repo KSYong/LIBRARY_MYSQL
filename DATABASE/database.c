@@ -144,7 +144,7 @@ void database_process_data(database_t *database)
 
 /**
  * @fn void database_add_data(database_t* database)
- * @brief mysql에 row 추가 요청을 보내는 함수
+ * @brief mysql에 row 추가 요청을 보내고 그 결과를 서버에 전송하는 함수
  * @return void
  * @param database 작업을 수행할 database 객체
  */
@@ -153,7 +153,42 @@ void database_add_data(database_t *database)
 	if (database)
 	{
 		printf("Success! database add start\n");
-		if (mysql_query(database->mysql, "INSERT INTO Books VALUES(NULL, 'title', 'author')"))
+		char title[50];
+		char author[50];
+		ssize_t send_byte;
+		ssize_t recv_byte;
+		char buffer[BUF_MAX_LEN];
+		socklen_t len = sizeof(database->server_addr);
+		// recv title data from server
+		recv_byte = recvfrom(database->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(database->server_addr), &len);
+		if (recv_byte > 0)
+		{
+			buffer[recv_byte] = '\0';
+			printf("From server .. title : %s\n", buffer);
+			strcpy(title, buffer);
+			// recv author data from server
+			recv_byte = recvfrom(database->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(database->server_addr), &len);
+			if (recv_byte > 0)
+			{
+				buffer[recv_byte] = '\0';
+				printf("From server .. author : %s\n", buffer);
+				strcpy(author, buffer);
+			}
+			else
+			{
+				perror("Failed! receiving data from client failure");
+				return -1;
+			}
+		}
+		else
+		{
+			perror("Failed! receiving data from client failure");
+			return -1;
+		}
+		printf("Data receive success! query start!\n");
+		char query[100];
+		sprintf(query, "INSERT INTO Books VALUES(NULL, '%s', '%s')", title, author);
+		if (mysql_query(database->mysql, query))
 		{
 			fprintf(stderr, "%s\n", mysql_error(database->mysql));
 			mysql_close(database->mysql);

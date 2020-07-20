@@ -14,9 +14,9 @@ void \hyperlink{server_8c_a247d4c50ac76fb272765ba165fd5dba5}{server\-\_\-destroy
 void \hyperlink{server_8c_ad65a1380cc66e35c2e86060186bb5f57}{server\-\_\-process\-\_\-data} (\hyperlink{structserver__t}{server\-\_\-t} $\ast$server)
 \begin{DoxyCompactList}\small\item\em client에서 오는 명령에 따라 mysql에 요청하고 응답을 받아 다시 client에 응답하는 함수 \end{DoxyCompactList}\item 
 void \hyperlink{server_8c_a1475a53bbe62fe9a6eaa2637b2c85d12}{server\-\_\-add\-\_\-data} (\hyperlink{structserver__t}{server\-\_\-t} $\ast$server)
-\begin{DoxyCompactList}\small\item\em My\-S\-Q\-L의 books 테이블에 데이터 추가를 요청하는 함수 \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em database에 row 추가 요청을 보내고 그 결과를 client에 전송하는 함수 \end{DoxyCompactList}\item 
 void \hyperlink{server_8c_ad7f0f8ffc54021d5c8b158d3d83f47db}{server\-\_\-display\-\_\-data} (\hyperlink{structserver__t}{server\-\_\-t} $\ast$server)
-\begin{DoxyCompactList}\small\item\em My\-S\-Q\-L의 books 테이블의 모든 데이터들을 표시하는 요청을 database에 보내고 그 응답을 client에 전달하는 함수 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em database의 모든 데이터들을 표시하는 요청을 database에 보내고 그 응답을 client에 전달하는 함수 \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Function Documentation}
@@ -47,7 +47,7 @@ Definition at line 21 of file server.\-c.
 )}}\label{server_8c_a1475a53bbe62fe9a6eaa2637b2c85d12}
 
 
-My\-S\-Q\-L의 books 테이블에 데이터 추가를 요청하는 함수 
+database에 row 추가 요청을 보내고 그 결과를 client에 전송하는 함수 
 
 \begin{DoxyReturn}{Returns}
 void 
@@ -59,7 +59,7 @@ void
 \end{DoxyParams}
 
 
-Definition at line 160 of file server.\-c.
+Definition at line 161 of file server.\-c.
 
 \hypertarget{server_8c_a247d4c50ac76fb272765ba165fd5dba5}{\index{server.\-c@{server.\-c}!server\-\_\-destroy@{server\-\_\-destroy}}
 \index{server\-\_\-destroy@{server\-\_\-destroy}!server.c@{server.\-c}}
@@ -93,7 +93,7 @@ Definition at line 78 of file server.\-c.
 )}}\label{server_8c_ad7f0f8ffc54021d5c8b158d3d83f47db}
 
 
-My\-S\-Q\-L의 books 테이블의 모든 데이터들을 표시하는 요청을 database에 보내고 그 응답을 client에 전달하는 함수 
+database의 모든 데이터들을 표시하는 요청을 database에 보내고 그 응답을 client에 전달하는 함수 
 
 \begin{DoxyReturn}{Returns}
 void 
@@ -105,7 +105,7 @@ void
 \end{DoxyParams}
 
 
-Definition at line 208 of file server.\-c.
+Definition at line 256 of file server.\-c.
 
 \hypertarget{server_8c_aa5664d4df8364715518c29c1b012f033}{\index{server.\-c@{server.\-c}!server\-\_\-init@{server\-\_\-init}}
 \index{server\-\_\-init@{server\-\_\-init}!server.c@{server.\-c}}

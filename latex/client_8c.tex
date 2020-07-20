@@ -11,35 +11,29 @@ int \hyperlink{client_8c_a3c04138a5bfe5d72780bb7e82a18e627}{main} (int argc, cha
 \begin{DoxyCompactList}\small\item\em client 객체를 생성하고 초기화하는 함수 \end{DoxyCompactList}\item 
 void \hyperlink{client_8c_a78c6ed6e74b3ce44da9950931b7d1381}{client\-\_\-destroy} (\hyperlink{structclient__t}{client\-\_\-t} $\ast$client)
 \begin{DoxyCompactList}\small\item\em client 객체를 삭제하기 위한 함수 \end{DoxyCompactList}\item 
-void \hyperlink{client_8c_a8cfe1f951153da310bba8c345fe2a98c}{client\-\_\-add\-\_\-data} (\hyperlink{structclient__t}{client\-\_\-t} $\ast$client)
-\begin{DoxyCompactList}\small\item\em server로 add 명령을 보내고 응답을 받는 함수 \end{DoxyCompactList}\item 
+void \hyperlink{client_8c_ac77a5cabe930e0194fab2f97ababb5eb}{client\-\_\-add\-\_\-data} (\hyperlink{structclient__t}{client\-\_\-t} $\ast$client, char $\ast$title, char $\ast$author)
+\item 
 void \hyperlink{client_8c_a075167f6395030489e0a63815bb26050}{client\-\_\-display\-\_\-data} (\hyperlink{structclient__t}{client\-\_\-t} $\ast$client)
-\begin{DoxyCompactList}\small\item\em server로 display 명령을 보내고 display 정보를 받는 함수 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em server로 display 명령을 보내고 display 정보를 받는 함수 \end{DoxyCompactList}\item 
+void \hyperlink{client_8c_a9311d59bd2a73b2b5c9443ba42efc106}{client\-\_\-send\-\_\-data} (\hyperlink{structclient__t}{client\-\_\-t} $\ast$client, char $\ast$send\-\_\-buf)
+\item 
+char $\ast$ \hyperlink{client_8c_a5077e9f6991a792d9dd8fab413795d2a}{client\-\_\-recv\-\_\-data} (\hyperlink{structclient__t}{client\-\_\-t} $\ast$client)
+\end{DoxyCompactItemize}
 
 
 \subsection{Function Documentation}
-\hypertarget{client_8c_a8cfe1f951153da310bba8c345fe2a98c}{\index{client.\-c@{client.\-c}!client\-\_\-add\-\_\-data@{client\-\_\-add\-\_\-data}}
+\hypertarget{client_8c_ac77a5cabe930e0194fab2f97ababb5eb}{\index{client.\-c@{client.\-c}!client\-\_\-add\-\_\-data@{client\-\_\-add\-\_\-data}}
 \index{client\-\_\-add\-\_\-data@{client\-\_\-add\-\_\-data}!client.c@{client.\-c}}
 \subsubsection[{client\-\_\-add\-\_\-data}]{\setlength{\rightskip}{0pt plus 5cm}void client\-\_\-add\-\_\-data (
 \begin{DoxyParamCaption}
-\item[{{\bf client\-\_\-t} $\ast$}]{client}
+\item[{{\bf client\-\_\-t} $\ast$}]{client, }
+\item[{char $\ast$}]{title, }
+\item[{char $\ast$}]{author}
 \end{DoxyParamCaption}
-)}}\label{client_8c_a8cfe1f951153da310bba8c345fe2a98c}
+)}}\label{client_8c_ac77a5cabe930e0194fab2f97ababb5eb}
 
 
-server로 add 명령을 보내고 응답을 받는 함수 
-
-\begin{DoxyReturn}{Returns}
-void 
-\end{DoxyReturn}
-
-\begin{DoxyParams}{Parameters}
-{\em client} & 요청을 하기 위한 client 객체 \\
-\hline
-\end{DoxyParams}
-
-
-Definition at line 86 of file client.\-c.
+Definition at line 89 of file client.\-c.
 
 \hypertarget{client_8c_a78c6ed6e74b3ce44da9950931b7d1381}{\index{client.\-c@{client.\-c}!client\-\_\-destroy@{client\-\_\-destroy}}
 \index{client\-\_\-destroy@{client\-\_\-destroy}!client.c@{client.\-c}}
@@ -62,7 +56,7 @@ void
 \end{DoxyParams}
 
 
-Definition at line 63 of file client.\-c.
+Definition at line 66 of file client.\-c.
 
 \hypertarget{client_8c_a075167f6395030489e0a63815bb26050}{\index{client.\-c@{client.\-c}!client\-\_\-display\-\_\-data@{client\-\_\-display\-\_\-data}}
 \index{client\-\_\-display\-\_\-data@{client\-\_\-display\-\_\-data}!client.c@{client.\-c}}
@@ -85,7 +79,7 @@ void
 \end{DoxyParams}
 
 
-Definition at line 128 of file client.\-c.
+Definition at line 153 of file client.\-c.
 
 \hypertarget{client_8c_a79115ea669ab14277ada1fc054ad01bf}{\index{client.\-c@{client.\-c}!client\-\_\-init@{client\-\_\-init}}
 \index{client\-\_\-init@{client\-\_\-init}!client.c@{client.\-c}}
@@ -103,7 +97,30 @@ client 객체를 생성하고 초기화하는 함수
 \end{DoxyReturn}
 
 
-Definition at line 32 of file client.\-c.
+Definition at line 35 of file client.\-c.
+
+\hypertarget{client_8c_a5077e9f6991a792d9dd8fab413795d2a}{\index{client.\-c@{client.\-c}!client\-\_\-recv\-\_\-data@{client\-\_\-recv\-\_\-data}}
+\index{client\-\_\-recv\-\_\-data@{client\-\_\-recv\-\_\-data}!client.c@{client.\-c}}
+\subsubsection[{client\-\_\-recv\-\_\-data}]{\setlength{\rightskip}{0pt plus 5cm}char$\ast$ client\-\_\-recv\-\_\-data (
+\begin{DoxyParamCaption}
+\item[{{\bf client\-\_\-t} $\ast$}]{client}
+\end{DoxyParamCaption}
+)}}\label{client_8c_a5077e9f6991a792d9dd8fab413795d2a}
+
+
+Definition at line 231 of file client.\-c.
+
+\hypertarget{client_8c_a9311d59bd2a73b2b5c9443ba42efc106}{\index{client.\-c@{client.\-c}!client\-\_\-send\-\_\-data@{client\-\_\-send\-\_\-data}}
+\index{client\-\_\-send\-\_\-data@{client\-\_\-send\-\_\-data}!client.c@{client.\-c}}
+\subsubsection[{client\-\_\-send\-\_\-data}]{\setlength{\rightskip}{0pt plus 5cm}void client\-\_\-send\-\_\-data (
+\begin{DoxyParamCaption}
+\item[{{\bf client\-\_\-t} $\ast$}]{client, }
+\item[{char $\ast$}]{send\-\_\-buf}
+\end{DoxyParamCaption}
+)}}\label{client_8c_a9311d59bd2a73b2b5c9443ba42efc106}
+
+
+Definition at line 215 of file client.\-c.
 
 \hypertarget{client_8c_a3c04138a5bfe5d72780bb7e82a18e627}{\index{client.\-c@{client.\-c}!main@{main}}
 \index{main@{main}!client.c@{client.\-c}}

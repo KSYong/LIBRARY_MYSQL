@@ -104,7 +104,7 @@ void database_process_data(database_t *database)
 		const char *response = "command successfully executed.";
 		socklen_t len = sizeof(database->server_addr);
 
-		// recv data from server
+		// get command from server 
 		recv_byte = recvfrom(database->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(database->server_addr), &len);
 
 		if (recv_byte > 0)
@@ -124,7 +124,7 @@ void database_process_data(database_t *database)
 		{
 			perror("Failed! receiving data from client failure");
 		}
-		// return data to server
+		// return success data to server
 		send_byte = sendto(database->sockfd, (const char *)response, strlen(response), MSG_CONFIRM, (struct sockaddr *)&(database->server_addr), len);
 		if (send_byte <= 0)
 		{
@@ -173,7 +173,7 @@ void database_add_data(database_t *database)
 
 /**
  * @fn void database_display_data(database_t* database)
- * @brief mysql에 Books 테이블 정보를 요청하고 결과를 받는 함수
+ * @brief mysql에 Books 테이블 정보를 요청하고 결과를 받아 서버에 보내는 함수
  * @return void
  * @param database 작업을 수행할 database 객체
  */
@@ -181,8 +181,8 @@ void database_display_data(database_t *database)
 {
 	if (database)
 	{
-		char val[50][100];
-		unsigned long *lengths;
+		char buf[50][0];
+		char send_buf[200] = {0};
 		if (mysql_query(database->mysql, "SELECT * FROM Books"))
 		{
 			fprintf(stderr, "%s\n", mysql_error(database->mysql));
@@ -193,34 +193,42 @@ void database_display_data(database_t *database)
 		{
 			printf("Succes! Data displayed from MySQL DB\n");
 		}
-
 		MYSQL_RES *result = mysql_store_result(database->mysql);
 		int num_fields = mysql_num_fields(result);
 		MYSQL_ROW row;
-
+		int j = 0;
 		while (row = mysql_fetch_row(result))
 		{
-			//lengths = mysql_fetch_lengths(result);
 			for (int i = 0; i < num_fields; i++)
 			{
 				if (row[i])
 				{
-					sprintf(&val[i][0], "%s", row[i]);
-					printf("%s\n", val[i]);
+					sprintf(&buf[j][0], "%s ", row[i]);
+					printf("%s", buf[j]);
+					strcat(send_buf, buf[j]);
+					
 				}
 				else
-				{
+				{ 
 					printf("NULL");
 				}
-				/*
-				val = row[i];
-				printf("%s \n", row[i] ? row[i] : "NULL");
-				printf("buffer = %s", val);
-				*/
 			}
 			printf("\n");
+			j++;
 		}
 		mysql_free_result(result);
+		ssize_t send_byte;
+		socklen_t len = sizeof(database->server_addr);
+		//send display data to server
+		send_byte = sendto(database->sockfd, (const char *)send_buf, strlen(send_buf), MSG_CONFIRM, (struct sockaddr *)&(database->server_addr), len);
+		if (send_byte <= 0)
+		{
+			perror("Failed! database to server data send failure");
+		}
+		else
+		{
+			printf("Success! Display data  sent from database to server\n");
+		}
 	}
 	else
 	{

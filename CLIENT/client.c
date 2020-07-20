@@ -93,7 +93,7 @@ void client_add_data(client_t *client)
         ssize_t send_byte;
         ssize_t recv_byte;
         socklen_t len = sizeof(client->server_addr);
-
+        //request command to server
         send_byte = sendto(client->sockfd, add, strlen(add), MSG_CONFIRM, (const struct sockaddr *)&(client->server_addr), len);
         if ((send_byte <= 0))
         {
@@ -104,6 +104,7 @@ void client_add_data(client_t *client)
         {
             printf("Success! add command sent from client to server\n");
         }
+        //get success from server
         recv_byte = recvfrom(client->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(client->server_addr), &len);
         if (recv_byte > 0)
         {
@@ -120,7 +121,7 @@ void client_add_data(client_t *client)
 
 /**
  * @fn void client_display_data(client_t* client)
- * @brief server로 display 명령을 보내고 응답을 받는 함수
+ * @brief server로 display 명령을 보내고 display 정보를 받는 함수
  * @return void
  * @param client 요청을 하기 위한 client 객체
  */
@@ -132,7 +133,7 @@ void client_display_data(client_t *client)
     ssize_t send_byte;
     ssize_t recv_byte;
     socklen_t len = sizeof(client->server_addr);
-
+    //request display command to server
     send_byte = sendto(client->sockfd, display, strlen(display), 0, (struct sockaddr *)&(client->server_addr), len);
     if (send_byte <= 0)
     {
@@ -142,8 +143,34 @@ void client_display_data(client_t *client)
     else
     {
         printf("Success! display command sent from client to server\n");
+        //get display data from server
+        recv_byte = recvfrom(client->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(client->server_addr), &len);
+        if (recv_byte > 0)
+        {
+            printf("success! display information received from server\n");
+            buffer[recv_byte] = '\0';
+            int i = 0;
+            int count = 0;
+            while(buffer[i] != NULL){
+                printf("%c", buffer[i]);
+                if (buffer[i] == ' '){     
+                    count++;
+                    if(count == 3){
+                        printf("%c", buffer[i]);
+                        printf("\n");
+                        count = 0;
+                    }
+                }
+                i++;
+            }
+        }
+        else
+        {
+            perror("Failed! receiving data from server failure");
+            return -1;
+        }
     }
-
+    //get success data from server
     recv_byte = recvfrom(client->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(client->server_addr), &len);
     if (recv_byte > 0)
     {

@@ -260,39 +260,65 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        socklen_t len = <span class="keyword">sizeof</span>(server-&gt;database_addr);</div>
 <div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        <span class="keywordflow">if</span> (server)</div>
 <div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;        {</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;            send_byte = sendto(server-&gt;sockfd, (<span class="keyword">const</span> <span class="keywordtype">char</span> *)display, strlen(display), MSG_CONFIRM, (<span class="keyword">struct</span> sockaddr *)&amp;(server-&gt;database_addr), len);</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;            <span class="keywordflow">if</span> (send_byte &gt; 0)</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;            {</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;                printf(<span class="stringliteral">&quot;Success! display request sent from server to database\n&quot;</span>);</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;            }</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;            {</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;                perror(<span class="stringliteral">&quot;Failed! server to database data send failure&quot;</span>);</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                <span class="keywordflow">return</span> -1;</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;            }</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;            recv_byte = recvfrom(server-&gt;sockfd, (<span class="keywordtype">char</span> *)buffer, <a class="code" href="server_8h.html#aae114cdd7784a59af222f175dac6312b">BUF_MAX_LEN</a>, MSG_WAITALL, (<span class="keyword">struct</span> sockaddr *)&amp;(server-&gt;database_addr), &amp;len);</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;            <span class="keywordflow">if</span> (recv_byte &gt; 0)</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;            {</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;                buffer[recv_byte] = <span class="charliteral">&#39;\0&#39;</span>;</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;                printf(<span class="stringliteral">&quot;Database response : %s\n&quot;</span>, buffer);</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;                printf(<span class="stringliteral">&quot;Success! Return from Database to Server confirmed!\n&quot;</span>);</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;            }</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;            {</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;                perror(<span class="stringliteral">&quot;Failed! return from database to server failure&quot;</span>);</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;                <span class="keywordflow">return</span> -1;</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;            }</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;        }</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        {</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;            perror(<span class="stringliteral">&quot;Failed! couldn&#39;t get server object&quot;</span>);</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;            <span class="keywordflow">return</span> -1;</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        }</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;    }</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;}</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;            <span class="comment">//request display to database</span></div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;            send_byte = sendto(server-&gt;sockfd, (<span class="keyword">const</span> <span class="keywordtype">char</span> *)display, strlen(display), MSG_CONFIRM, (<span class="keyword">struct</span> sockaddr *)&amp;(server-&gt;database_addr), len);</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;            <span class="keywordflow">if</span> (send_byte &gt; 0)</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;            {</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;                printf(<span class="stringliteral">&quot;Success! display request sent from server to database\n&quot;</span>);</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;            }</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;            {</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                perror(<span class="stringliteral">&quot;Failed! server to database data send failure&quot;</span>);</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;            }</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;            <span class="comment">//return display data from database</span></div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;            recv_byte = recvfrom(server-&gt;sockfd, (<span class="keywordtype">char</span> *)buffer, <a class="code" href="server_8h.html#aae114cdd7784a59af222f175dac6312b">BUF_MAX_LEN</a>, MSG_WAITALL, (<span class="keyword">struct</span> sockaddr *)&amp;(server-&gt;database_addr), &amp;len);</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;            <span class="keywordflow">if</span> (recv_byte &gt; 0)</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;            {</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;                buffer[recv_byte] = <span class="charliteral">&#39;\0&#39;</span>;</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;                printf(<span class="stringliteral">&quot;Database response : %s\n&quot;</span>, buffer);</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;                printf(<span class="stringliteral">&quot;Success! Return from Database to Server confirmed!\n&quot;</span>);</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;                printf(<span class="stringliteral">&quot;Trying to send response to client\n&quot;</span>);</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;                <span class="comment">//send display data to client</span></div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;                send_byte = sendto(server-&gt;sockfd, (<span class="keyword">const</span> <span class="keywordtype">char</span> *)buffer, strlen(buffer), MSG_CONFIRM, (<span class="keyword">struct</span> sockaddr *)&amp;(server-&gt;client_addr), len);</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;                <span class="keywordflow">if</span> (send_byte &lt;= 0)</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;                {</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;                    perror(<span class="stringliteral">&quot;Failed! server to client data send failure&quot;</span>);</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;                }</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;                <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;                {</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;                    printf(<span class="stringliteral">&quot;Success! display response sent from server to client\n&quot;</span>);</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;                }</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;            }</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;            {</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;                perror(<span class="stringliteral">&quot;Failed! return from database to server failure&quot;</span>);</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;                <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;            }</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;            <span class="comment">//get success data from databae</span></div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;            recv_byte = recvfrom(server-&gt;sockfd, (<span class="keywordtype">char</span> *)buffer, <a class="code" href="server_8h.html#aae114cdd7784a59af222f175dac6312b">BUF_MAX_LEN</a>, MSG_WAITALL, (<span class="keyword">struct</span> sockaddr *)&amp;(server-&gt;database_addr), &amp;len);</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;            <span class="keywordflow">if</span> (recv_byte &gt; 0)</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;            {</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;                buffer[recv_byte] = <span class="charliteral">&#39;\0&#39;</span>;</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;                printf(<span class="stringliteral">&quot;Database response : %s\n&quot;</span>, buffer);</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                printf(<span class="stringliteral">&quot;Success! Return from Database to Server confirmed!\n&quot;</span>);</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;            }</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;            {</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                perror(<span class="stringliteral">&quot;Failed! return from database to server failure&quot;</span>);</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;                <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;            }</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;        }</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;        <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;        {</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;            perror(<span class="stringliteral">&quot;Failed! couldn&#39;t get server object&quot;</span>);</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;            <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;        }</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    }</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;}</div>
 <div class="ttc" id="server_8c_html_ad65a1380cc66e35c2e86060186bb5f57"><div class="ttname"><a href="server_8c.html#ad65a1380cc66e35c2e86060186bb5f57">server_process_data</a></div><div class="ttdeci">void server_process_data(server_t *server)</div><div class="ttdoc">client에서 오는 명령에 따라 mysql에 요청하고 응답을 받아 다시 client에 응답하는 함수 </div><div class="ttdef"><b>Definition:</b> <a href="server_8c_source.html#l00104">server.c:104</a></div></div>
 <div class="ttc" id="structserver__t_html"><div class="ttname"><a href="structserver__t.html">server_t</a></div><div class="ttdoc">client의 메시지 요청에 대한 응답을 처리하기 위한 구조체 </div></div>
-<div class="ttc" id="server_8c_html_ad7f0f8ffc54021d5c8b158d3d83f47db"><div class="ttname"><a href="server_8c.html#ad7f0f8ffc54021d5c8b158d3d83f47db">server_display_data</a></div><div class="ttdeci">void server_display_data(server_t *server)</div><div class="ttdoc">MySQL의 books 테이블의 모든 데이터들을 표시하는 요청을 보내는 함수 </div><div class="ttdef"><b>Definition:</b> <a href="server_8c_source.html#l00208">server.c:208</a></div></div>
+<div class="ttc" id="server_8c_html_ad7f0f8ffc54021d5c8b158d3d83f47db"><div class="ttname"><a href="server_8c.html#ad7f0f8ffc54021d5c8b158d3d83f47db">server_display_data</a></div><div class="ttdeci">void server_display_data(server_t *server)</div><div class="ttdoc">MySQL의 books 테이블의 모든 데이터들을 표시하는 요청을 database에 보내고 그 응답을 client에 전달하는 함수 </div><div class="ttdef"><b>Definition:</b> <a href="server_8c_source.html#l00208">server.c:208</a></div></div>
 <div class="ttc" id="server_8c_html_a247d4c50ac76fb272765ba165fd5dba5"><div class="ttname"><a href="server_8c.html#a247d4c50ac76fb272765ba165fd5dba5">server_destroy</a></div><div class="ttdeci">void server_destroy(server_t *server)</div><div class="ttdoc">server 객체를 삭제하기 위한 함수 </div><div class="ttdef"><b>Definition:</b> <a href="server_8c_source.html#l00078">server.c:78</a></div></div>
 <div class="ttc" id="server_8h_html"><div class="ttname"><a href="server_8h.html">server.h</a></div></div>
 <div class="ttc" id="server_8h_html_aae114cdd7784a59af222f175dac6312b"><div class="ttname"><a href="server_8h.html#aae114cdd7784a59af222f175dac6312b">BUF_MAX_LEN</a></div><div class="ttdeci">#define BUF_MAX_LEN</div><div class="ttdef"><b>Definition:</b> <a href="server_8h_source.html#l00015">server.h:15</a></div></div>

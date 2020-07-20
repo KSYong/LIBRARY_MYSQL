@@ -201,7 +201,7 @@ void server_add_data(server_t *server)
 
 /**
  * @fn void server_display_data(server_t* server)
- * @brief MySQL의 books 테이블의 모든 데이터들을 표시하는 요청을 보내는 함수
+ * @brief MySQL의 books 테이블의 모든 데이터들을 표시하는 요청을 database에 보내고 그 응답을 client에 전달하는 함수
  * @return void
  * @param server MySQL에 요청을 보낼  server 객체
  */
@@ -216,6 +216,7 @@ void server_display_data(server_t *server)
         socklen_t len = sizeof(server->database_addr);
         if (server)
         {
+            //request display to database
             send_byte = sendto(server->sockfd, (const char *)display, strlen(display), MSG_CONFIRM, (struct sockaddr *)&(server->database_addr), len);
             if (send_byte > 0)
             {
@@ -226,6 +227,31 @@ void server_display_data(server_t *server)
                 perror("Failed! server to database data send failure");
                 return -1;
             }
+            //return display data from database
+            recv_byte = recvfrom(server->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(server->database_addr), &len);
+            if (recv_byte > 0)
+            {
+                buffer[recv_byte] = '\0';
+                printf("Database response : %s\n", buffer);
+                printf("Success! Return from Database to Server confirmed!\n");
+                printf("Trying to send response to client\n");
+                //send display data to client
+                send_byte = sendto(server->sockfd, (const char *)buffer, strlen(buffer), MSG_CONFIRM, (struct sockaddr *)&(server->client_addr), len);
+                if (send_byte <= 0)
+                {
+                    perror("Failed! server to client data send failure");
+                }
+                else
+                {
+                    printf("Success! display response sent from server to client\n");
+                }
+            }
+            else
+            {
+                perror("Failed! return from database to server failure");
+                return -1;
+            }
+            //get success data from databae
             recv_byte = recvfrom(server->sockfd, (char *)buffer, BUF_MAX_LEN, MSG_WAITALL, (struct sockaddr *)&(server->database_addr), &len);
             if (recv_byte > 0)
             {
